@@ -6,36 +6,25 @@
 
 (provide insert-if-short print-insert-result)
 
-;; Helper: determine if the length of a list is less than n.
-;; Stops early when count reaches n to avoid full traversal.
-(define (length-less-than? lst n)
-  (let loop ((l lst) (count 0))
-    (cond
-      [(or (null? l) (>= count n)) (< count n)]
-      [else (loop (cdr l) (+ count 1))])))
+;; Custom length function (tail‑recursive)
+(define (my-length lst)
+  (let loop ((l lst) (cnt 0))
+    (if (null? l)
+        cnt
+        (loop (cdr l) (+ cnt 1)))))
 
-;; Tail‑recursive reverse using accumulator.
+;; Custom map function using an accumulator and manual reverse.
 (define (my-reverse lst)
   (let recur ((src lst) (acc '()))
     (if (null? src)
         acc
         (recur (cdr src) (cons (car src) acc)))))
 
-;; Core transformer that processes each element, preserving order.
-;; Returns a proper list.
-(define (transform-elements elems x n)
-  (let loop ((remaining elems) (out '()))
-    (if (null? remaining)
+(define (my-map f lst)
+  (let loop ((l lst) (out '()))
+    (if (null? l)
         (my-reverse out)
-        (let ((elem (car remaining)))
-          (cond
-            [(pair? elem)
-             ;; elem is a sublist; recursively transform it first.
-             (let ((new-sub (insert-if-short x elem n)))
-               (loop (cdr remaining) (cons new-sub out)))]
-            [else
-             ;; atom – keep as‑is.
-             (loop (cdr remaining) (cons elem out))])))))
+        (loop (cdr l) (cons (f (car l)) out)))))
 
 ;; Main function: inserts x at front of every list whose original length < n.
 (define (insert-if-short x lst n)
@@ -43,11 +32,15 @@
     [(null? lst)
      (if (< 0 n) (list x) '())] ; empty list case
     [else
-     (let ((transformed (transform-elements lst x n)))
-       (if (length-less-than? lst n)
+     ;; Transform each element: recurse on sublists.
+     (let ((transformed (my-map (lambda (elem)
+                                   (if (pair? elem)
+                                       (insert-if-short x elem n)
+                                       elem))
+                                 lst)))
+       (if (< (my-length lst) n)
            (cons x transformed)
-           transformed))]))
-
+           transformed))])))
 ;; Driver: reads x, lst, n from stdin and displays the resulting list.
 (define (print-insert-result)
   (let* ([x (read)]
