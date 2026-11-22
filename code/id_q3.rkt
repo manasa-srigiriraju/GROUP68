@@ -107,3 +107,47 @@
     (newline)
     (display (tree-postorder tree))
     (newline)))
+
+
+;; tree-height : (listof any) -> integer
+;; Returns the height of a binary tree.
+;; Convention: height of () is 0, height of node is 1 + max(height(left), height(right)).
+(define (tree-height tree)
+  (cond
+    [(null? tree) 0]
+    [else
+      (+ 1 (max (tree-height (tree-left tree))
+                (tree-height (tree-right tree))))]))
+
+;; leaf-count-helper : (listof any) integer -> integer
+;; Recursively counts the number of leaves in tree, accumulating into acc.
+;; State is passed through the accumulator argument.
+(define (leaf-count-helper tree acc)
+  (cond
+    [(null? tree) acc]
+    [(and (null? (tree-left tree))
+          (null? (tree-right tree)))
+     (+ acc 1)]
+    [else
+      (leaf-count-helper
+        (tree-left tree)
+        (leaf-count-helper (tree-right tree) acc))]))
+
+;; tree-leaf-count : (listof any) -> integer
+;; Returns the count of leaf nodes in a binary tree.
+;; Convention: a leaf is a node whose subtrees are both (). The empty tree has 0 leaves.
+(define (tree-leaf-count tree)
+  (leaf-count-helper tree 0))
+
+;; tree-height-and-leaves : (listof any) -> (listof integer)
+;; Returns a list (height leaf-count) for the given binary tree.
+(define (tree-height-and-leaves tree)
+  (list (tree-height tree) (tree-leaf-count tree)))
+
+;; print-height-and-leaves : (listof any) -> void
+;; S1.c: Prints, on one line using display, the list (height leaf-count)
+;; of the given binary tree, followed by a newline.
+(define (print-height-and-leaves tree)
+  (begin
+    (display (tree-height-and-leaves tree))
+    (newline)))
