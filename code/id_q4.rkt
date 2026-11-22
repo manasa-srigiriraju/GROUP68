@@ -26,21 +26,25 @@
         (my-reverse out)
         (loop (cdr l) (cons (f (car l)) out)))))
 
-;; Main function: inserts x at front of every list whose original length < n.
-(define (insert-if-short x lst n)
-  (cond
-    [(null? lst)
-     (if (< 0 n) (list x) '())] ; empty list case
-    [else
-     ;; Transform each element: recurse on sublists.
-     (let ((transformed (my-map (lambda (elem)
+;; Higher‑order inserter creator.
+(define (make-inserter x len-ok?)
+  (lambda (lst)
+    (cond
+      [(null? lst)
+       (if (len-ok? 0) (list x) '())]
+      [else
+       (let ((transformed (my-map (lambda (elem)
                                    (if (pair? elem)
-                                       (insert-if-short x elem n)
+                                       ((make-inserter x len-ok?) elem)
                                        elem))
                                  lst)))
-       (if (< (my-length lst) n)
-           (cons x transformed)
-           transformed))])))
+         (if (len-ok? (my-length lst))
+             (cons x transformed)
+             transformed))])))
+
+;; Final definition using make‑inserter.
+(define (insert-if-short x lst n)
+  ((make-inserter x (lambda (len) (< len n))) lst)))
 ;; Driver: reads x, lst, n from stdin and displays the resulting list.
 (define (print-insert-result)
   (let* ([x (read)]
