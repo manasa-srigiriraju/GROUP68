@@ -33,9 +33,8 @@
 
 ;; inorder-helper : (listof any) (listof any) -> (listof any)
 ;; Recursively collects tree values inorder (left subtree, node, right subtree)
-;; into the accumulator acc, which holds the values that come after the current
-;; subtree. The left recursive call is in tail position, and all state is passed
-;; through function arguments.
+;; into accumulator acc, which stores values that succeed the current subtree.
+;; Left recursive call is in tail position, passing state through arguments.
 (define (inorder-helper tree acc)
   (cond
     [(null? tree) acc]
