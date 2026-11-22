@@ -1,8 +1,15 @@
-SWI-Prolog 9.x and Racket 8.x. Scheme code is written in #lang racket/base and uses nothing but the built-ins listed for each problem.
+Racket v8.18 
 
-What your files contain: only definitions. Racket files start with #lang racket/base. Do not call your functions at the top level and do not print anything when the file is loaded; the grader adds the calls itself. Prolog files must not contain any initialization directive.
+---
+name: scheme-dev
+description: general instructions, conventions, and a self-review checklist for writing Scheme/Racket code.
+---
 
-How your code is run: Prolog: swipl -q -f id_q1.pl -g main -t halt (runs main), and for other predicates swipl -q -f id_q1.pl -g "<goal>" -t halt. Do not call halt/0 yourself and do not use any initialization directive. Scheme: racket id_q3.rkt and racket id_q4.rkt (the grader adds its own calls to the end of your file).
+Scheme code is written in #lang racket/base and uses nothing but the built-ins listed for each problem.
+
+What our files contain: only definitions. Racket files start with #lang racket/base. Do not call your functions at the top level and do not print anything when the file is loaded; the grader adds the calls itself.
+
+How our code is run: racket id_q3.rkt and racket id_q4.rkt (the grader adds its own calls to the end of your file).
 
 Scheme rules (apply to S1 and S2)
 Only the following built-ins may be used: define, lambda, let, let*, letrec, named let, if, cond (with
@@ -16,3 +23,7 @@ list-ref or list-tail. If you need such a function, write your own helper (for e
 
 Only work on the section that was prompted, do not change prior code unless absolutely necessary.
 Code must at the end work as intended.
+
+conventions:
+1. 
+
