@@ -56,3 +56,54 @@
   (begin
     (display (tree-inorder tree))
     (newline)))
+
+
+;; preorder-helper : (listof any) (listof any) -> (listof any)
+;; Recursively collects tree values preorder (node, left subtree, right subtree)
+;; into accumulator acc, which stores values that succeed the current subtree.
+;; Passes all state through function arguments.
+(define (preorder-helper tree acc)
+  (cond
+    [(null? tree) acc]
+    [else
+      (cons (tree-val tree)
+            (preorder-helper
+              (tree-left tree)
+              (preorder-helper (tree-right tree) acc)))]))
+
+;; tree-preorder : (listof any) -> (listof any)
+;; Returns a list containing the values of the binary tree in preorder.
+(define (tree-preorder tree)
+  (preorder-helper tree '()))
+
+;; postorder-helper : (listof any) (listof any) -> (listof any)
+;; Recursively collects tree values postorder (left subtree, right subtree, node)
+;; into accumulator acc, which stores values that succeed the current subtree.
+;; The left recursive call is in tail position, passing state through arguments.
+(define (postorder-helper tree acc)
+  (cond
+    [(null? tree) acc]
+    [else
+      (postorder-helper
+        (tree-left tree)
+        (postorder-helper
+          (tree-right tree)
+          (cons (tree-val tree) acc)))]))
+
+;; tree-postorder : (listof any) -> (listof any)
+;; Returns a list containing the values of the binary tree in postorder.
+(define (tree-postorder tree)
+  (postorder-helper tree '()))
+
+;; print-all-traversals : (listof any) -> void
+;; S1.b: Prints three lines using display: the inorder list, the preorder list
+;; (node, left subtree, right subtree), and the postorder list (left subtree,
+;; right subtree, node). Each line is terminated by a newline.
+(define (print-all-traversals tree)
+  (begin
+    (display (tree-inorder tree))
+    (newline)
+    (display (tree-preorder tree))
+    (newline)
+    (display (tree-postorder tree))
+    (newline)))
