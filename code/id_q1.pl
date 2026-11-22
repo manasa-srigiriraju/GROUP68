@@ -103,36 +103,62 @@ clue(8, Solution) :-
     % Check that this friend does not use JavaScript
     Lang \= javascript.
 
+% CLUE 9: The friend whose favorite language is Java prefers the embedded project.
+clue(9, Solution) :-
+    % Locate the friend whose favorite language is Java and verify project is embedded
+    member(p(_Name, _Dept, java, embedded), Solution).
+
+%% candidate_solution(-Solution)
+%  Generates a candidate assignment of departments, languages, and projects
+%  to the four friends, ensuring all attributes are unique.
+candidate_solution(Solution) :-
+    % Template for the four friends in fixed order
+    Solution = [p('Alex', DeptA, LangA, ProjA),p('Ben', DeptB, LangB, ProjB),p('Carla', DeptC, LangC, ProjC),p('Dana', DeptD, LangD, ProjD)],
+    % Assign unique departments
+    departments(Depts),
+    permutation(Depts, [DeptA,DeptB,DeptC,DeptD]),
+    % Assign unique languages
+    languages(Langs),
+    permutation(Langs, [LangA,LangB,LangC,LangD]),
+    % Assign unique projects
+    projects(Projs),
+    permutation(Projs, [ProjA,ProjB,ProjC,ProjD]).
+
+%% check_clues(+ClueList, +Solution)
+%  Recursively verifies that every clue number in ClueList holds for the given Solution.
+check_clues([], _Solution).
+check_clues([Clue|Rest], Solution) :-
+    % Check the current clue number against the candidate solution
+    clue(Clue, Solution),
+    % Recursively verify the remaining clues in the list
+    check_clues(Rest, Solution).
+
+%% count_solutions(+Active, -N)
+%  Counts the number of distinct solutions that satisfy all clues in the
+%  Active list, ignoring any clues not in the list.
+count_solutions(Active, N) :-
+    % Find all solutions satisfying each clue in Active
+    findall(Solution, (
+        candidate_solution(Solution),
+        check_clues(Active, Solution)
+    ), Solutions),
+    % Count the total number of solutions found
+    length(Solutions, N).
+
 %% solve(-Solution)
 %  Derives a valid assignment of attributes to the four friends that satisfies
 %  all attribute uniqueness constraints and clues 1 through 8.
 solve(Solution) :-
-    % Set up the solution structure in the fixed order: Alex, Ben, Carla, Dana
-    Solution = [p('Alex', DeptA, LangA, ProjA),p('Ben', DeptB, LangB, ProjB),p('Carla', DeptC, LangC, ProjC),p('Dana', DeptD, LangD, ProjD)],
-    % Assign a permutation of departments ensuring each is used exactly once
-    departments(Depts),
-    permutation(Depts, [DeptA,DeptB,DeptC,DeptD]),
-    % Assign a permutation of languages ensuring each is used exactly once
-    languages(Langs),
-    permutation(Langs, [LangA,LangB,LangC,LangD]),
-    % Assign a permutation of projects ensuring each is used exactly once
-    projects(Projs),
-    permutation(Projs, [ProjA,ProjB,ProjC,ProjD]),
-    % Verify clue 1
+    % Generate a candidate solution with unique attributes
+    candidate_solution(Solution),
+    % Verify all clues from 1 to 8
     clue(1, Solution),
-    % Verify clue 2
     clue(2, Solution),
-    % Verify clue 3
     clue(3, Solution),
-    % Verify clue 4
     clue(4, Solution),
-    % Verify clue 5
     clue(5, Solution),
-    % Verify clue 6
     clue(6, Solution),
-    % Verify clue 7
     clue(7, Solution),
-    % Verify clue 8
     clue(8, Solution).
 
 %% print_solution(+Solution)
